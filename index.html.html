@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DARK SNIPER LK | Ultimate Gaming Portal</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            red: '#ff003c',
+                            darkred: '#8b0000',
+                            glow: '#ff1744',
+                            black: '#0a0a0c',
+                            card: '#121216'
+                        }
+                    },
+                    fontFamily: {
+                        gaming: ['Orbitron', 'sans-serif'],
+                        body: ['Rajdhani', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'neon-sm': '0 0 10px rgba(255, 0, 60, 0.4)',
+                        'neon-md': '0 0 20px rgba(255, 0, 60, 0.6)',
+                        'neon-lg': '0 0 35px rgba(255, 0, 60, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #070709;
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .font-gaming {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(18, 18, 24, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 0, 60, 0.25);
+        }
+
+        .glass-panel-hover:hover {
+            border-color: rgba(255, 0, 60, 0.7);
+            box-shadow: 0 0 25px rgba(255, 0, 60, 0.35);
+            transform: translateY(-4px);
+        }
+
+        .neon-border {
+            border: 1px solid #ff003c;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(255, 0, 60, 0.8), 0 0 20px rgba(255, 0, 60, 0.4);
+        }
+
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px #ff003c); }
+            50% { opacity: 1; filter: drop-shadow(0 0 18px #ff003c); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2.5s infinite;
+        }
+
+        ::-webkit-scrollbar { width: 7px; }
+        ::-webkit-scrollbar-track { background: #0a0a0c; }
+        ::-webkit-scrollbar-thumb { background: #ff003c; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff1744; }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-neon-red selection:text-white">
+
+    <!-- Background Canvas Animation -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+    <div class="scanlines fixed inset-0 z-0"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+
+        <!-- NAVIGATION HEADER -->
+        <header class="sticky top-0 z-40 glass-panel border-b border-red-500/20 px-4 lg:px-8 py-3.5 transition-all">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-black border border-neon-red flex items-center justify-center shadow-neon-sm group-hover:shadow-neon-md transition-all">
+                        <i class="fa-solid fa-crosshairs text-neon-red text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-gaming font-black text-xl lg:text-2xl tracking-wider text-white">
+                            DARK<span class="text-neon-red neon-text">SNIPER</span>
+                            <span class="text-xs ml-1 px-1.5 py-0.5 rounded bg-red-950 text-red-400 border border-red-800">LK</span>
+                        </span>
+                        <span class="block text-[10px] tracking-widest text-zinc-400 font-bold uppercase -mt-1">High Performance Gaming Hub</span>
+                    </div>
+                </a>
+
+                <!-- Status & Active Badge -->
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-red-900/50 text-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span class="text-zinc-300 font-medium">STATUS: <span class="text-emerald-400 font-bold">ONLINE</span></span>
+                    </div>
+                    <div id="adminBadge" class="hidden items-center gap-1.5 px-3 py-1.5 bg-red-600/20 border border-neon-red text-neon-red rounded-lg text-xs font-gaming font-semibold cursor-pointer shadow-neon-sm" onclick="openAdminPanel()">
+                        <i class="fa-solid fa-gauge-high"></i> ADMIN DASHBOARD
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- HERO SECTION -->
+        <section class="max-w-7xl mx-auto px-4 lg:px-8 pt-10 pb-6 w-full text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-red-500/30 text-red-400 text-xs uppercase tracking-widest font-gaming mb-4">
+                <i class="fa-solid fa-bolt-lightning text-neon-red"></i> Verified Fast Direct Cloud Downloads
+            </div>
+            <h1 class="font-gaming font-extrabold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight">
+                ELITE MODS, TOOLS & <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-400 to-red-600 neon-text">
+                    PRO GAMING ASSETS
+                </span>
+            </h1>
+            <p class="mt-3 text-zinc-400 max-w-2xl mx-auto text-base sm:text-lg">
+                Exclusive high-speed configurations, mod apks, scripts, and gaming files. Fully tested, ultra-secure, and virus-free.
+            </p>
+
+            <!-- Search and Filter Controls -->
+            <div class="mt-8 max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-3">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search mods, games, configs..." 
+                        class="w-full pl-11 pr-4 py-3 bg-zinc-900/90 rounded-xl border border-zinc-800 focus:border-neon-red focus:outline-none focus:ring-1 focus:ring-neon-red text-white text-sm placeholder-zinc-500 transition-all">
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                    <select id="categoryFilter" class="w-full sm:w-auto px-4 py-3 bg-zinc-900/90 rounded-xl border border-zinc-800 focus:border-neon-red focus:outline-none text-zinc-300 text-sm font-semibold cursor-pointer">
+                        <option value="ALL">All Categories</option>
+                        <option value="PC Games">PC Games</option>
+                        <option value="Mod Menus">Mod Menus</option>
+                        <option value="Sniper Configs">Sniper Configs</option>
+                        <option value="Tools & Scripts">Tools & Scripts</option>
+                        <option value="Mobile APKs">Mobile APKs</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILE CARDS GRID -->
+        <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6 flex-grow w-full">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b border-zinc-800/80">
+                <h2 class="font-gaming text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cubes text-neon-red"></i> Available Assets
+                </h2>
+                <span id="itemCount" class="text-xs text-zinc-400 font-bold bg-zinc-900 px-3 py-1 rounded-md border border-zinc-800">
+                    Loading assets...
+                </span>
+            </div>
+
+            <!-- Dynamic File Container -->
+            <div id="filesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic cards render here -->
+            </div>
+
+            <!-- No Data State -->
+            <div id="noResults" class="hidden text-center py-16 glass-panel rounded-2xl border-dashed border-red-900/40">
+                <i class="fa-solid fa-ghost text-5xl text-zinc-600 mb-3 animate-bounce"></i>
+                <h3 class="font-gaming text-lg text-zinc-300">No Gaming Files Found</h3>
+                <p class="text-zinc-500 text-sm mt-1">Try another search keyword or clear the filter.</p>
+            </div>
+        </main>
+
+        <!-- 2-STEP AD VERIFICATION MODAL -->
+        <div id="adModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md px-4 hidden">
+            <div class="glass-panel w-full max-w-lg rounded-2xl p-6 sm:p-8 relative border-neon-red shadow-neon-md transform transition-all">
+                <button onclick="closeDownloadModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-red-950/60 border border-neon-red mx-auto flex items-center justify-center mb-4 animate-pulse-glow">
+                        <i id="lockIcon" class="fa-solid fa-lock text-neon-red text-2xl"></i>
+                    </div>
+
+                    <h3 class="font-gaming font-extrabold text-xl sm:text-2xl text-white tracking-wide">
+                        UNLOCK YOUR FILE
+                    </h3>
+                    <p id="modalFileName" class="text-sm font-semibold text-red-400 mt-1 line-clamp-1">Downloading...</p>
+                    <p class="text-xs text-zinc-400 mt-1">Complete the 2-step verification to unlock the direct Google Drive link.</p>
+
+                    <!-- Progress Bar Steps -->
+                    <div class="mt-6 mb-6">
+                        <div class="flex justify-between text-xs font-gaming font-bold text-zinc-400 mb-1 px-1">
+                            <span id="stepLabel1" class="text-neon-red">1. Verify Ad 1</span>
+                            <span id="stepLabel2">2. Verify Ad 2</span>
+                            <span id="stepLabel3">3. Unlocked</span>
+                        </div>
+                        <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden p-0.5 border border-zinc-700">
+                            <div id="progressBar" class="h-full bg-gradient-to-r from-red-600 to-rose-400 rounded-full transition-all duration-500 w-1/3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-3" id="modalActionContainer">
+                        <button id="btnStep1" onclick="handleAdClick(1)" 
+                            class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-gaming font-bold tracking-wider text-sm shadow-neon-sm flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-shield-virus"></i> Step 1: Verify Ad 1
+                        </button>
+
+                        <button id="btnStep2" onclick="handleAdClick(2)" 
+                            class="hidden w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-gaming font-bold tracking-wider text-sm shadow-neon-sm flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-shield-halved"></i> Step 2: Verify Ad 2
+                        </button>
+
+                        <button id="btnFinalDownload" onclick="executeFinalDownload()" 
+                            class="hidden w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-gaming font-extrabold tracking-wider text-base shadow-[0_0_25px_rgba(16,185,129,0.7)] flex items-center justify-center gap-2 transition-all animate-bounce">
+                            <i class="fa-brands fa-google-drive text-xl"></i> Direct Download (Unlocked)
+                        </button>
+                    </div>
+
+                    <div class="mt-4 text-[11px] text-zinc-500 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> Free Direct Access & No Waiting Queues
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN LOGIN MODAL -->
+        <div id="adminLoginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md px-4 hidden">
+            <div class="glass-panel w-full max-w-md rounded-2xl p-6 sm:p-8 relative border-red-500/40">
+                <button onclick="closeAdminLogin()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="text-center mb-6">
+                    <i class="fa-solid fa-user-shield text-3xl text-neon-red mb-2"></i>
+                    <h3 class="font-gaming font-bold text-xl text-white">Admin Authentication</h3>
+                    <p class="text-xs text-zinc-400">Restricted zone for DARK SNIPER LK moderators.</p>
+                </div>
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-gaming text-zinc-300 mb-1">Username</label>
+                        <input type="text" id="adminUser" required placeholder="Enter username" 
+                            class="w-full px-4 py-2.5 bg-zinc-900 rounded-lg border border-zinc-800 focus:border-neon-red text-white text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-gaming text-zinc-300 mb-1">Password</label>
+                        <input type="password" id="adminPass" required placeholder="Enter password" 
+                            class="w-full px-4 py-2.5 bg-zinc-900 rounded-lg border border-zinc-800 focus:border-neon-red text-white text-sm outline-none">
+                    </div>
+                    <p id="loginError" class="text-xs text-red-500 font-semibold hidden">Invalid credentials!</p>
+                    <button type="submit" class="w-full py-3 bg-neon-red hover:bg-red-600 text-white font-gaming font-bold rounded-lg text-sm transition-all shadow-neon-sm">
+                        Authenticate Access
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ADMIN DASHBOARD MODAL -->
+        <div id="adminDashboardModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg px-4 hidden">
+            <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-2xl p-6 sm:p-8 relative border-neon-red overflow-y-auto">
+                <button onclick="closeAdminPanel()" class="absolute top-5 right-5 text-zinc-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <div class="flex flex-wrap items-center justify-between border-b border-zinc-800 pb-4 mb-6">
+                    <div>
+                        <h2 class="font-gaming font-black text-2xl text-white flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-neon-red"></i> Admin Command Panel
+                        </h2>
+                        <span class="text-xs text-zinc-400">Manage cloud gaming assets and database connections</span>
+                    </div>
+                    <button onclick="handleAdminLogout()" class="px-3 py-1.5 bg-zinc-800 hover:bg-red-950 text-red-400 border border-red-900/50 rounded-lg text-xs font-bold font-gaming">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+
+                <!-- Firebase Config -->
+                <div class="mb-8 p-4 rounded-xl bg-zinc-900/90 border border-zinc-800">
+                    <h4 class="text-sm font-gaming font-bold text-red-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-database"></i> Firebase Realtime Database Config
+                    </h4>
+                    <p class="text-xs text-zinc-400 mb-3">Enter your Firebase Realtime Database URL to sync downloads and assets live.</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="firebaseDbUrlInput" placeholder="https://your-project-default-rtdb.firebaseio.com" 
+                            class="flex-grow px-3 py-2 bg-black rounded-lg border border-zinc-700 text-xs text-white outline-none focus:border-neon-red">
+                        <button onclick="saveFirebaseConfig()" class="px-4 py-2 bg-zinc-800 hover:bg-neon-red text-white text-xs font-gaming font-bold rounded-lg transition-all">
+                            Save & Sync
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add File Form -->
+                <div class="p-5 rounded-xl bg-zinc-900/60 border border-red-500/20 mb-8">
+                    <h4 class="text-sm font-gaming font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-neon-red"></i> Add New Game / Asset
+                    </h4>
+                    <form onsubmit="handleAddNewFile(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-gaming text-zinc-400 mb-1">Title</label>
+                            <input type="text" id="fileTitle" required placeholder="e.g. Free Fire Headshot Mod V4" 
+                                class="w-full px-3 py-2 bg-black rounded-lg border border-zinc-800 text-xs text-white outline-none focus:border-neon-red">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-gaming text-zinc-400 mb-1">Category</label>
+                            <select id="fileCategory" required class="w-full px-3 py-2 bg-black rounded-lg border border-zinc-800 text-xs text-zinc-300 outline-none focus:border-neon-red">
+                                <option value="Sniper Configs">Sniper Configs</option>
+                                <option value="Mod Menus">Mod Menus</option>
+                                <option value="PC Games">PC Games</option>
+                                <option value="Tools & Scripts">Tools & Scripts</option>
+                                <option value="Mobile APKs">Mobile APKs</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-gaming text-zinc-400 mb-1">File Size</label>
+                            <input type="text" id="fileSize" required placeholder="e.g. 145 MB or 1.8 GB" 
+                                class="w-full px-3 py-2 bg-black rounded-lg border border-zinc-800 text-xs text-white outline-none focus:border-neon-red">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-gaming text-zinc-400 mb-1">Google Drive Link (URL)</label>
+                            <input type="url" id="fileDriveLink" required placeholder="https://drive.google.com/..." 
+                                class="w-full px-3 py-2 bg-black rounded-lg border border-zinc-800 text-xs text-white outline-none focus:border-neon-red">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-gaming text-zinc-400 mb-1">Description</label>
+                            <textarea id="fileDesc" rows="2" required placeholder="Describe features, version number, patch details..." 
+                                class="w-full px-3 py-2 bg-black rounded-lg border border-zinc-800 text-xs text-white outline-none focus:border-neon-red"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-gaming font-bold rounded-lg text-xs tracking-wider shadow-neon-sm">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Publish Asset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Assets Management -->
+                <div>
+                    <h4 class="text-sm font-gaming font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-neon-red"></i> Manage Live Assets
+                    </h4>
+                    <div id="adminFileList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <!-- Items rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER WITH ADMIN BUTTON -->
+        <footer class="glass-panel border-t border-red-950/60 py-8 px-4 lg:px-8 mt-12 relative">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div>
+                    <span class="font-gaming font-extrabold text-white text-lg tracking-wider">
+                        DARK<span class="text-neon-red">SNIPER</span> LK
+                    </span>
+                    <p class="text-xs text-zinc-500 mt-1">© 2026 DARK SNIPER LK. Designed for extreme gamers. All rights reserved.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a href="https://youtube.com" target="_blank" class="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 hover:border-red-600 flex items-center justify-center text-zinc-400 hover:text-neon-red transition-all">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                    <a href="https://t.me" target="_blank" class="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 hover:border-red-600 flex items-center justify-center text-zinc-400 hover:text-neon-red transition-all">
+                        <i class="fa-brands fa-telegram"></i>
+                    </a>
+                    <a href="https://discord.com" target="_blank" class="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 hover:border-red-600 flex items-center justify-center text-zinc-400 hover:text-neon-red transition-all">
+                        <i class="fa-brands fa-discord"></i>
+                    </a>
+
+                    <!-- Your Exact Admin Button -->
+                    <button onclick="showAdminModal()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shadow-neon-sm ml-2">
+                        🔐 Admin Login
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const AD_URL = "https://omg10.com/4/11611864";
+        const ADMIN_USER = "dark";
+        const ADMIN_PASS = "dark";
+
+        const DEFAULT_FILES = [
+            {
+                id: "ds_01",
+                title: "DarkSniper Ultra AimLock Config 2026",
+                category: "Sniper Configs",
+                size: "45 MB",
+                desc: "High precision 99.8% headshot coefficient configuration for fast snipers. Includes zero recoil calibration.",
+                driveLink: "https://drive.google.com",
+                downloads: 3420
+            },
+            {
+                id: "ds_02",
+                title: "CyberMod FPS Optimizer & Bypass Tool",
+                category: "Tools & Scripts",
+                size: "128 MB",
+                desc: "Boost your FPS from 60 to 120+ and optimize graphics rendering pipelines with full anti-ban protection.",
+                driveLink: "https://drive.google.com",
+                downloads: 8150
+            },
+            {
+                id: "ds_03",
+                title: "V-Pro Mod Menu APK (VIP Edition)",
+                category: "Mod Menus",
+                size: "82 MB",
+                desc: "Full unlocked ESP, Antenna, Speed Boost, Wall View, and custom crosshairs overlay for Android 11-15.",
+                driveLink: "https://drive.google.com",
+                downloads: 12400
+            }
+        ];
+
+        let filesDatabase = [];
+        let activeFileForDownload = null;
+        let firebaseInitialized = false;
+        let dbRef = null;
+
+        // Background Particle Mesh Animation
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.6;
+                this.speedY = (Math.random() - 0.5) * 0.6;
+                this.opacity = Math.random() * 0.6 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 0, 60, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 45; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 110) {
+                        ctx.strokeStyle = `rgba(255, 0, 60, ${0.15 * (1 - dist / 110)})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateBackground);
+        }
+        animateBackground();
+
+        // Firebase Integration
+        function initFirebase() {
+            const savedDbUrl = localStorage.getItem('darksniper_firebase_url');
+            if (savedDbUrl) {
+                try {
+                    const config = { databaseURL: savedDbUrl };
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(config);
+                    }
+                    dbRef = firebase.database().ref('darksniper_files');
+                    firebaseInitialized = true;
+
+                    dbRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            filesDatabase = Object.keys(data).map(key => ({
+                                id: key,
+                                ...data[key]
+                            }));
+                        } else {
+                            DEFAULT_FILES.forEach(item => {
+                                firebase.database().ref('darksniper_files/' + item.id).set(item);
+                            });
+                            filesDatabase = [...DEFAULT_FILES];
+                        }
+                        renderFiles();
+                        if (isAdminLoggedIn()) renderAdminManageList();
+                    });
+                } catch (e) {
+                    console.error("Firebase init failed:", e);
+                    loadLocalFallback();
+                }
+            } else {
+                loadLocalFallback();
+            }
+        }
+
+        function loadLocalFallback() {
+            const stored = localStorage.getItem('darksniper_local_files');
+            if (stored) {
+                try {
+                    filesDatabase = JSON.parse(stored);
+                } catch (e) {
+                    filesDatabase = [...DEFAULT_FILES];
+                }
+            } else {
+                filesDatabase = [...DEFAULT_FILES];
+                localStorage.setItem('darksniper_local_files', JSON.stringify(filesDatabase));
+            }
+            renderFiles();
+            if (isAdminLoggedIn()) renderAdminManageList();
+        }
+
+        function saveFirebaseConfig() {
+            const url = document.getElementById('firebaseDbUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem('darksniper_firebase_url', url);
+                alert("Firebase URL configured! Reloading...");
+                window.location.reload();
+            } else {
+                alert("Please enter a valid Firebase Realtime Database URL.");
+            }
+        }
+
+        // Render Files
+        function renderFiles() {
+            const grid = document.getElementById('filesGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const catVal = document.getElementById('categoryFilter').value;
+            const noResults = document.getElementById('noResults');
+
+            const filtered = filesDatabase.filter(file => {
+                const matchesSearch = file.title.toLowerCase().includes(searchVal) || file.desc.toLowerCase().includes(searchVal);
+                const matchesCat = catVal === 'ALL' || file.category === catVal;
+                return matchesSearch && matchesCat;
+            });
+
+            document.getElementById('itemCount').innerText = `${filtered.length} AVAILABLE`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            grid.innerHTML = filtered.map(file => `
+                <div class="glass-panel glass-panel-hover rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 border-red-500/20 group">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2.5 py-1 rounded-md text-[10px] font-gaming font-extrabold uppercase bg-red-950/80 text-neon-red border border-red-800/60">
+                                ${escapeHtml(file.category)}
+                            </span>
+                            <span class="text-xs text-zinc-400 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-hard-drive text-red-400 text-[10px]"></i> ${escapeHtml(file.size)}
+                            </span>
+                        </div>
+                        <h3 class="font-gaming font-bold text-white text-base group-hover:text-red-400 transition-colors line-clamp-2">
+                            ${escapeHtml(file.title)}
+                        </h3>
+                        <p class="text-zinc-400 text-xs mt-2 line-clamp-3 leading-relaxed">
+                            ${escapeHtml(file.desc)}
+                        </p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between gap-3">
+                        <div class="text-xs text-zinc-400 flex items-center gap-1.5 font-bold">
+                            <i class="fa-solid fa-download text-neon-red"></i>
+                            <span id="dl-count-${file.id}" class="text-zinc-200">${(file.downloads || 0).toLocaleString()}</span>
+                        </div>
+                        <button onclick="initiateDownload('${file.id}')" 
+                            class="px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-gaming font-bold text-xs tracking-wider shadow-neon-sm hover:shadow-neon-md flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-bolt"></i> Download Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderFiles);
+        document.getElementById('categoryFilter').addEventListener('change', renderFiles);
+
+        // 2-Step Ad Verification Flow
+        function initiateDownload(fileId) {
+            const file = filesDatabase.find(f => f.id === fileId);
+            if (!file) return;
+
+            activeFileForDownload = file;
+            document.getElementById('modalFileName').innerText = file.title;
+            resetAdModalSteps();
+            document.getElementById('adModal').classList.remove('hidden');
+        }
+
+        function resetAdModalSteps() {
+            document.getElementById('btnStep1').classList.remove('hidden');
+            document.getElementById('btnStep2').classList.add('hidden');
+            document.getElementById('btnFinalDownload').classList.add('hidden');
+            document.getElementById('progressBar').style.width = '33%';
+            document.getElementById('stepLabel1').className = 'text-neon-red font-bold';
+            document.getElementById('stepLabel2').className = 'text-zinc-500';
+            document.getElementById('stepLabel3').className = 'text-zinc-500';
+            document.getElementById('lockIcon').className = "fa-solid fa-lock text-neon-red text-2xl";
+        }
+
+        function handleAdClick(stepNumber) {
+            window.open(AD_URL, '_blank');
+
+            if (stepNumber === 1) {
+                document.getElementById('btnStep1').classList.add('hidden');
+                document.getElementById('btnStep2').classList.remove('hidden');
+                document.getElementById('progressBar').style.width = '66%';
+                document.getElementById('stepLabel1').className = 'text-emerald-400 font-bold';
+                document.getElementById('stepLabel2').className = 'text-neon-red font-bold';
+            } else if (stepNumber === 2) {
+                document.getElementById('btnStep2').classList.add('hidden');
+                document.getElementById('btnFinalDownload').classList.remove('hidden');
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('stepLabel2').className = 'text-emerald-400 font-bold';
+                document.getElementById('stepLabel3').className = 'text-emerald-400 font-bold';
+                document.getElementById('lockIcon').className = "fa-solid fa-lock-open text-emerald-400 text-2xl";
+            }
+        }
+
+        function executeFinalDownload() {
+            if (!activeFileForDownload) return;
+
+            const targetUrl = activeFileForDownload.driveLink;
+            const fileId = activeFileForDownload.id;
+
+            if (firebaseInitialized && dbRef) {
+                const currentCount = activeFileForDownload.downloads || 0;
+                firebase.database().ref(`darksniper_files/${fileId}/downloads`).set(currentCount + 1);
+            } else {
+                activeFileForDownload.downloads = (activeFileForDownload.downloads || 0) + 1;
+                const idx = filesDatabase.findIndex(f => f.id === fileId);
+                if (idx !== -1) {
+                    filesDatabase[idx] = activeFileForDownload;
+                    localStorage.setItem('darksniper_local_files', JSON.stringify(filesDatabase));
+                    renderFiles();
+                }
+            }
+
+            window.open(targetUrl, '_blank');
+            closeDownloadModal();
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('adModal').classList.add('hidden');
+            activeFileForDownload = null;
+        }
+
+        // Admin Actions & Modal Handlers
+        function showAdminModal() {
+            if (isAdminLoggedIn()) {
+                openAdminPanel();
+            } else {
+                document.getElementById('adminLoginModal').classList.remove('hidden');
+            }
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                localStorage.setItem('darksniper_admin_session', 'true');
+                closeAdminLogin();
+                updateAdminBadge();
+                openAdminPanel();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function isAdminLoggedIn() {
+            return localStorage.getItem('darksniper_admin_session') === 'true';
+        }
+
+        function updateAdminBadge() {
+            const badge = document.getElementById('adminBadge');
+            if (isAdminLoggedIn()) {
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+            }
+        }
+
+        function handleAdminLogout() {
+            localStorage.removeItem('darksniper_admin_session');
+            updateAdminBadge();
+            closeAdminPanel();
+            alert("Admin logged out successfully.");
+        }
+
+        function openAdminPanel() {
+            if (!isAdminLoggedIn()) return;
+            const savedUrl = localStorage.getItem('darksniper_firebase_url') || '';
+            document.getElementById('firebaseDbUrlInput').value = savedUrl;
+            renderAdminManageList();
+            document.getElementById('adminDashboardModal').classList.remove('hidden');
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminDashboardModal').classList.add('hidden');
+        }
+
+        function handleAddNewFile(e) {
+            e.preventDefault();
+            const title = document.getElementById('fileTitle').value.trim();
+            const category = document.getElementById('fileCategory').value;
+            const size = document.getElementById('fileSize').value.trim();
+            const driveLink = document.getElementById('fileDriveLink').value.trim();
+            const desc = document.getElementById('fileDesc').value.trim();
+
+            const newId = 'ds_' + Date.now();
+            const newFile = {
+                id: newId,
+                title,
+                category,
+                size,
+                driveLink,
+                desc,
+                downloads: 0
+            };
+
+            if (firebaseInitialized && dbRef) {
+                firebase.database().ref('darksniper_files/' + newId).set(newFile);
+            } else {
+                filesDatabase.unshift(newFile);
+                localStorage.setItem('darksniper_local_files', JSON.stringify(filesDatabase));
+                renderFiles();
+            }
+
+            e.target.reset();
+            renderAdminManageList();
+            alert("New gaming asset published successfully!");
+        }
+
+        function deleteFile(fileId) {
+            if (!confirm("Are you sure you want to delete this file permanently?")) return;
+
+            if (firebaseInitialized && dbRef) {
+                firebase.database().ref('darksniper_files/' + fileId).remove();
+            } else {
+                filesDatabase = filesDatabase.filter(f => f.id !== fileId);
+                localStorage.setItem('darksniper_local_files', JSON.stringify(filesDatabase));
+                renderFiles();
+            }
+            renderAdminManageList();
+        }
+
+        function renderAdminManageList() {
+            const container = document.getElementById('adminFileList');
+            if (filesDatabase.length === 0) {
+                container.innerHTML = `<p class="text-xs text-zinc-500">No files found.</p>`;
+                return;
+            }
+
+            container.innerHTML = filesDatabase.map(f => `
+                <div class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs">
+                    <div class="flex-1 pr-3 truncate">
+                        <span class="font-bold text-white">${escapeHtml(f.title)}</span>
+                        <span class="text-zinc-500 text-[10px] ml-2 font-mono">(${f.downloads || 0} downloads)</span>
+                    </div>
+                    <button onclick="deleteFile('${f.id}')" class="px-2.5 py-1 bg-red-950 hover:bg-red-900 border border-red-700 text-red-300 rounded font-gaming text-[10px]">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                })[m];
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateAdminBadge();
+            initFirebase();
+        });
+    </script>
+</body>
+</html>
